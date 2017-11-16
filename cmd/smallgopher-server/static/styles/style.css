@@ -1,0 +1,68 @@
+ body {
+    padding: 0;
+    margin: 0;
+    font-size: 0.7em;
+}
+html, body{
+            height: 100%;
+            width: 100%;
+}
+#mapid {
+    height:100%;
+    width: 100%;
+    z-index: 10;
+}
+
+.button{
+    display: block;
+    cursor: pointer;
+    background: grey;
+    width: 100px;
+    height: 20px;
+}
+fieldset{
+    border: 1px solid #AAAAAA;
+}
+fieldset > legend{
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  margin: 10px;
+  border: none;
+  /* font: normal 16px/normal Arial Black, Gadget, sans-serif; */
+  -o-text-overflow: clip;
+  text-overflow: clip;
+}
+fieldset > label{
+    width: 150px;
+}
+.feature-popup-title{
+    font-weight: bold;
+ }
+.feature-table{
+    border: 0px;
+    border-collapse: collapse;
+}
+.feature-table-row > td {
+    font-size: 0.7em;
+    text-align: left;
+    padding: 8px;
+}
+.feature-table-row {
+    text-align: left;
+}
+.feature-table-row:nth-child(even) {
+    background-color: #f7f7f7;
+}
+#search-feature{
+    width: 200px;
+    height: 20px;
+}
+#search-field{
+    width: 200px;
+    height: 20px;
+}
+#search-value{
+    width: 200px;
+    height: 20px;
+}

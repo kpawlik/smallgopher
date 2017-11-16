@@ -1,0 +1,326 @@
+{
+    "server": {
+        "port": 4000,
+        "center": [52.22184111652178, 0.10957786174227713],
+        "features": [
+            {
+                "name": "pl_of_interest",
+                "display_name": "POI",
+                "dataset": "gis",
+                "min_zoom": 10,
+                "max_zoom": 20,
+                "fields": [
+                    {
+                        "name": "pl_of_interest_id",
+                        "display_name": "ID",
+                        "key": true,
+                        "type": "int"
+                    },
+                    {
+                        "name": "name",
+                        "display_name": "Name",
+                        "type": "string",
+                        "searchable": true
+                    },
+                    {
+                        "name": "location",
+                        "display_name": "Geom",
+                        "type": "point",
+                        "geom": true
+                    }
+                ]
+            },
+            {
+                "name": "hotel",
+                "display_name": "Hotel",
+                "dataset": "gis",
+                "min_zoom": 10,
+                "max_zoom": 20,
+                "fields": [
+                    {
+                        "name": "name",
+                        "display_name": "Name",
+                        "key": true,
+                        "type": "string",
+                        "searchable": true
+                    },
+                    {
+                        "name": "address1",
+                        "display_name": "Address 1",
+                        "type": "string"
+                    },
+                    {
+                        "name": "address2",
+                        "display_name": "Address 2",
+                        "type": "string"
+                    },
+                    {
+                        "name": "location",
+                        "display_name": "Geom",
+                        "type": "point",
+                        "geom": true
+                    }
+                ]
+            },
+            {
+                "name": "rail_line",
+                "display_name": "Rail Line",
+                "dataset": "gis",
+                "min_zoom": 10,
+                "max_zoom": 20,
+                "fields": [
+                    {
+                        "name": "rail_line_id",
+                        "display_name": "ID",
+                        "key": true,
+                        "type": "int"
+                    },
+                    {
+                        "name": "type",
+                        "display_name": "Type",
+                        "type": "string"
+                    },
+                    {
+                        "name": "centre_line",
+                        "display_name": "Geom",
+                        "type": "chain",
+                        "geom": true
+                    }
+                ]
+            },
+            {
+                "name": "trunk_road",
+                "display_name": "Trunk Road",
+                "dataset": "gis",
+                "min_zoom": 10,
+                "max_zoom": 20,
+                "fields": [
+                    {
+                        "name": "trunk_road_id",
+                        "display_name": "ID",
+                        "key": true,
+                        "type": "int"
+                    },
+                    {
+                        "name": "name",
+                        "display_name": "Name",
+                        "type": "string",
+                        "searchable": true
+                    },
+                    {
+                        "name": "centre_line",
+                        "display_name": "Geom",
+                        "type": "chain",
+                        "geom": true
+                    }
+                ]
+            },
+            {
+                "name": "car_park",
+                "display_name": "Car Park",
+                "dataset": "gis",
+                "min_zoom": 10,
+                "max_zoom": 20,
+                "fields": [
+                    {
+                        "name": "name",
+                        "display_name": "ID",
+                        "key": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "location",
+                        "display_name": "Geom",
+                        "type": "point",
+                        "geom": true
+                    }
+                ]
+            },
+            {
+                "name": "office",
+                "display_name": "Office",
+                "dataset": "gis",
+                "min_zoom": 10,
+                "max_zoom": 20,
+                "fields": [
+                    {
+                        "name": "office_id",
+                        "display_name": "ID",
+                        "key": true,
+                        "type": "int"
+                    },
+                    {
+                        "name": "name",
+                        "display_name": "Name",
+                        "type": "string",
+                        "searchable": true
+                    },
+                    {
+                        "name": "address1",
+                        "display_name": "Address 1",
+                        "type": "string",
+                        "searchable": true
+                    },
+                    {
+                        "name": "address2",
+                        "display_name": "Address 2",
+                        "type": "string"
+                    },
+                    {
+                        "name": "location",
+                        "display_name": "Geom",
+                        "type": "point",
+                        "geom": true
+                    }
+                ]
+            },
+            {
+                "name": "slip_road",
+                "display_name": "Slip Road",
+                "dataset": "gis",
+                "min_zoom": 10,
+                "max_zoom": 20,
+                "fields": [
+                    {
+                        "name": "slip_road_id",
+                        "display_name": "ID",
+                        "key": true,
+                        "type": "int"
+                    },
+                    {
+                        "name": "centre_line",
+                        "display_name": "Geom",
+                        "type": "chain",
+                        "geom": true
+                    }
+                ]
+            },
+            {
+                "name": "min_road",
+                "display_name": "Min Road",
+                "dataset": "gis",
+                "min_zoom": 10,
+                "max_zoom": 20,
+                "fields": [
+                    {
+                        "name": "min_road_id",
+                        "display_name": "ID",
+                        "key": true,
+                        "type": "int"
+                    },
+                    {
+                        "name": "name",
+                        "display_name": "Name",
+                        "type": "string"
+                    },
+                    {
+                        "name": "centre_line",
+                        "display_name": "Geom",
+                        "type": "chain",
+                        "geom": true
+                    }
+                ]
+            },
+            {
+                "name": "footpath",
+                "display_name": "Footpath",
+                "dataset": "gis",
+                "min_zoom": 10,
+                "max_zoom": 20,
+                "fields": [
+                    {
+                        "name": "id",
+                        "display_name": "ID",
+                        "key": true,
+                        "type": "int"
+                    },
+                    {
+                        "name": "name",
+                        "display_name": "Name",
+                        "type": "string"
+                    },
+                    {
+                        "name": "centre_line",
+                        "display_name": "Geom",
+                        "type": "chain",
+                        "geom": true
+                    }
+                ]
+            },
+            {
+                "name": "town",
+                "display_name": "Town",
+                "dataset": "gis",
+                "min_zoom": 10,
+                "max_zoom": 20,
+                "fields": [
+                    {
+                        "name": "town_id",
+                        "display_name": "ID",
+                        "key": true,
+                        "type": "int"
+                    },
+                    {
+                        "name": "name",
+                        "display_name": "Name",
+                        "type": "string"
+                    },
+                    {
+                        "name": "coverage",
+                        "display_name": "Geom",
+                        "type": "area",
+                        "geom": true
+                    }
+                ]
+            },
+            {
+                "name": "park",
+                "display_name": "Park",
+                "dataset": "gis",
+                "min_zoom": 10,
+                "max_zoom": 20,
+                "fields": [
+                    {
+                        "name": "park_id",
+                        "display_name": "ID",
+                        "key": true,
+                        "type": "int"
+                    },
+                    {
+                        "name": "name",
+                        "display_name": "Name",
+                        "type": "string"
+                    },
+                    {
+                        "name": "coverage",
+                        "display_name": "Geom",
+                        "type": "area",
+                        "geom": true
+                    }
+                ]
+            }
+        ]
+    },
+    "workers": [
+        {
+            "port": 4002,
+            "host": "localhost",
+            "name": "w1"
+        },
+        {
+            "port": 4001,
+            "host": "localhost",
+            "name": "w2"
+        },
+        {
+            "port": 4003,
+            "host": "localhost",
+            "name": "w3"
+        },
+        {
+            "port": 4004,
+            "host": "localhost",
+            "name": "w4"
+        }
+    ]
+}

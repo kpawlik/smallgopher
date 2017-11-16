@@ -1,0 +1,421 @@
+#% text_encoding = utf8
+_package sw
+
+def_slotted_exemplar(:goworld,
+	##
+	## Class to communicate with goworld worker
+	## example of usage:
+	##
+	## start_goworld_worker(WOKER_NAME, PATH_TO_EXE_FILE, PATH_TO_CONF_FILE, PATH_TO_LOG_FILE)
+	##
+	{
+		{:name, _unset},
+		{:google_cs, _unset }
+	},
+	{:user_acp})
+$
+
+
+goworld.define_shared_constant(:success_code, 0, :public)
+$
+
+_method goworld.new(name,  exe_path, conf_path, log_path)
+##
+## Create new instance
+##
+	>> _clone.init(name,  exe_path, conf_path, log_path)
+_endmethod
+$
+
+_private _method goworld.init(name,  exe_path, port, log_path)
+    ##
+	## Init exemplar
+	##
+	_self.init_copy()
+	.name << name
+	.command << {write_string(exe_path,"  -n ", name, " -p ", port, " -l ", log_path )}
+	print(.command)
+	.program_ident << name
+	# First version, so min and max protocols are both zero
+	.minimum_protocol << 0
+	.maximum_protocol << 1
+	.google_cs << _self.google_crs()
+	>> _self
+_endmethod
+$
+
+_method goworld.select_protocol(number)
+	## do nothing - always 0 anyway
+_endmethod
+$
+
+
+
+
+
+_method goworld.start()
+	##
+	## Starts ACP and worker
+	##
+	write("starting workers: ", .name)
+	_protect
+		_self.lock()
+		_loop
+			_local method_name  << _self.get_chars()
+			_self.perform(method_name.as_symbol())
+
+		_endloop
+	_protection
+		_self.close()	
+		_self.unlock()  	# release the lock
+	_endprotect 
+_endmethod
+$
+
+
+
+_pragma(classify_level=restricted)
+_method goworld.google_crs()
+	##
+	## Constructs an in-memory LatLong WGS84 Coordinate system
+	##
+	_local cs_name << :world_longlat_wgs84_degree
+	transform.ellipsoid_sizes[:wgs84_spherical] << { 6378137, 1000000000000 } 
+	transform.define_datum(cs_name , transform.new(), :wgs84_spherical )
+	_return coordinate_system.new_proj(cs_name,
+					   :longlat,
+					   {},
+					   coordinate.new( 0, 0 ),
+					   :degree,
+					   :name ,cs_name,
+					   :external_cs_name,"Long-Lat WGS84 (degree)",
+					   :in_cs_menus?,_true)
+_endmethod
+$
+
+_method goworld.get_transform(ds)
+	_local ds_cs << ds.world.coordinate_system
+		_local google_cs << .google_cs
+		_local ds_to_googlr_tr << transform.new_converting_cs_to_cs(ds_cs, google_cs)
+		_return ds_to_googlr_tr
+_endmethod
+$
+
+_method goworld.features()
+	## 
+	##
+	##
+	
+		_local dataset_name << _self.get_chars().as_symbol()
+		_local collection_name << _self.get_chars().as_symbol()
+		_local limit << _self.get_unsigned_int()
+		_local bb_n << _self.get_float()
+		_local bb_e << _self.get_float() 
+		_local bb_s << _self.get_float() 
+		_local bb_w << _self.get_float()
+
+		_local ds << gis_program_manager.databases[dataset_name]
+		_local collection << ds.collections[collection_name]
+
+		_local bbox << bounding_box.new(bb_n, bb_e, bb_s, bb_w)
+		_local trx << _self.get_transform(ds)
+		_local ps_bbox << pseudo_bounding_box.new_for_world(bbox, ds.world)
+		ps_bbox << ps_bbox.transformed(trx.inverse())
+		ps_bbox.world << ds.world
+
+		_local field_names << rope.new()
+		_local id_name << _self.get_chars().as_symbol()
+		_local id_type << _self.get_chars().as_symbol()		
+		_local geom_name << _self.get_chars().as_symbol()
+		_local geom_type << _self.get_chars().as_symbol()
+
+		_local sel_collection << collection.select(predicate.interacts(geom_name, ps_bbox))
+		_local stream << sel_collection.read_stream()
+		_local i << 0
+		_loop
+			_if limit > 0 _and limit = i
+			_then
+				_self.put_unsigned_byte(1)
+				_leave 
+			_endif
+			_local record << stream.get()
+			_if record _is _unset 
+			_then
+				# no more record to get
+				_self.put_unsigned_byte(1)
+				_leave 
+			_endif
+			# more records to get
+			_self.put_unsigned_byte(0)
+			_local id << record.perform(id_name)
+			_if id_type = "int"
+			_then
+				_self.put_signed_long(id)
+			_elif id_type = "string"
+			_then
+				_self.put_chars(id)
+			_endif
+
+			i +<< 1
+			_self.flush()
+		_endloop
+		
+		_local no_records_to_get << _self.get_unsigned_int()
+
+		_for j _over range(1, no_records_to_get)
+		_loop
+
+			_local record_id <<
+				_if id_type = "int"
+				_then
+					>> _self.get_signed_long()						    _elif id_type = "string"
+				_then
+					>> _self.get_chars()
+				_endif
+
+			_local record << collection.at(record_id)
+			_local geom << record.perform(geom_name)
+				
+				
+			_self.put_geometry(geom, geom_type, trx)
+				
+
+			_self.flush()
+
+		_endloop
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method goworld.feature()
+	## 
+	## 
+		_local dataset_name << _self.get_chars().as_symbol()
+		_local collection_name << _self.get_chars().as_symbol()
+		_local id_name << _self.get_chars().as_symbol()
+		_local id_type << _self.get_chars().as_symbol()
+		_local id_value << _if id_type = "int"
+				   _then
+					   >> _self.get_signed_long()
+				   _elif id_type = "string"
+				   _then
+					   >> _self.get_chars()
+				   _endif
+
+
+		_local ds << gis_program_manager.databases[dataset_name]
+		_local collection << ds.collections[collection_name]
+
+		_local trx << _self.get_transform(ds)
+		
+		_local field_names << rope.new()
+		_local no_of_fields << _self.get_unsigned_int()
+		_over range(1, no_of_fields)
+		_loop
+			_local field_name << _self.get_chars()
+			field_names.add_last(field_name)
+		_endloop
+		_local record << collection.at(id_value)
+		_if record _is _unset 
+		_then
+			_self.put_unsigned_byte(1)
+			_leave 
+		_endif
+		_self.put_unsigned_byte(0)
+		_for field_name  _over field_names.fast_elements()
+			_loop
+				_local field_value << record.perform(field_name.as_symbol())
+				_local class_name << field_value.class_name
+				_if class_name _is :point _orif class_name _is :chain _orif class_name _is :area
+				_then
+					_self.put_geometry(field_value, class_name, trx)
+				_else
+					_self.put_chars(write_string(field_value))
+				_endif
+			_endloop
+			_self.flush()
+_endmethod
+$
+
+
+
+_method goworld.dump_features()
+	## 
+	##
+	##
+	
+		_local dataset_name << _self.get_chars().as_symbol()
+		_local collection_name << _self.get_chars().as_symbol()
+		_local limit << _self.get_unsigned_int()
+		_local bb_n << _self.get_float()
+		_local bb_e << _self.get_float() 
+		_local bb_s << _self.get_float() 
+		_local bb_w << _self.get_float()
+
+		_local ds << gis_program_manager.databases[dataset_name]
+		_local collection << ds.collections[collection_name]
+
+		_local bbox << bounding_box.new(bb_n, bb_e, bb_s, bb_w)
+		_local trx << _self.get_transform(ds)
+		_local ps_bbox << pseudo_bounding_box.new_for_world(bbox, ds.world)
+		ps_bbox << ps_bbox.transformed(trx.inverse())
+		ps_bbox.world << ds.world
+
+		_local field_names << rope.new()
+		_local id_name << _self.get_chars().as_symbol()
+		write("id_name: ",id_name)
+		_local id_type << _self.get_chars().as_symbol()
+		write("id_type: ", id_type)
+		_local geom_name << _self.get_chars().as_symbol()
+		write("geom_name: ", geom_name)
+		_local geom_type << _self.get_chars().as_symbol()
+		write("geom_type: ", geom_type)
+	
+
+		_local sel_collection << collection.select(predicate.interacts(geom_name, ps_bbox))
+		_local stream << sel_collection.read_stream()
+		_local i << 0
+		_loop
+			_if limit > 0 _and limit = i
+			_then
+				_self.put_unsigned_byte(1)
+				_leave 
+			_endif
+			_local record << stream.get()
+			_if record _is _unset 
+			_then
+				# no more record to get
+				_self.put_unsigned_byte(1)
+				_leave 
+			_endif
+			# more records to get
+			_self.put_unsigned_byte(0)
+			_local id << record.perform(id_name)
+			_if id_type = "int"
+			_then
+				_self.put_signed_long(id)
+			_elif id_type = "string"
+			_then
+				_self.put_chars(id)
+			_endif
+
+			i +<< 1
+			_self.flush()
+		_endloop
+		write("id to get: ", i)
+
+		_local no_of_fields << _self.get_unsigned_int()
+		write("no_of_fields: ", no_of_fields)
+		_local fields_names << rope.new()
+		_for k _over range(1, no_of_fields)
+		_loop
+			_local field_name << _self.get_chars()
+			write("field_name: ", field_name)
+			fields_names.add_last(field_name)
+		_endloop
+		
+		
+		
+		_local no_records_to_get << _self.get_unsigned_int()
+
+		_for j _over range(1, no_records_to_get)
+		_loop
+			
+
+			_local record_id <<
+				_if id_type = "int"
+				_then
+					>> _self.get_signed_long()
+				_elif id_type = "string"
+				_then
+					>> _self.get_chars()
+				_endif
+			write("record_id: ", record_id)
+			_local record << collection.at(record_id)
+			write("record: ", record)
+			_for field_name  _over fields_names.fast_elements()
+			_loop
+				write("field_name2: ", field_name)
+				_local field_value << record.perform(field_name.as_symbol())
+				write("field_value: ", field_value)
+				_local class_name << field_value.class_name
+				_if class_name _is :point _orif class_name _is :chain _orif class_name _is :area
+				_then
+					_self.put_geometry(field_value, class_name, trx)
+				_else
+					_self.put_chars(write_string(field_value))
+				_endif
+			_endloop
+			_self.flush()
+
+		_endloop
+
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method goworld.put_geometry(geometry, class_name, trx)
+	#---------------------------------------------------
+	## <Req. #> : <Description>
+	##
+	#
+	# Customization for Project : 
+	#
+	#---------------- Revision History -----------------
+	# (17/07/14 kpa) : Created
+	#-------------- End Revision History ---------------
+
+	_if class_name _is :point
+	_then
+		_self.put_coordinate(geometry.coord, trx)
+	_elif class_name _is :chain
+	_then 
+		_self.put_unsigned_int(geometry.n_segments * 2)
+		_for seg _over geometry.segments()
+		_loop 
+			_self.put_coordinate(seg.coords[1], trx)
+			_self.put_coordinate(seg.coords[2], trx)
+		_endloop
+	_elif class_name _is :area
+	_then
+		_local polygon << geometry.polygons.an_element()
+		_local sec << polygon.sectors.an_element()
+		_self.put_unsigned_int(sec.size)
+		_for coord _over sec.fast_elements()
+		_loop 
+			_self.put_coordinate(coord, trx)
+		_endloop
+	_endif 
+	
+_endmethod
+$
+
+
+
+_method goworld.put_coordinate(a_coord, a_trx)
+		
+		_local tr_coord << a_coord.transformed(a_trx)
+		_self.put_float(tr_coord.x)
+		_self.put_float(tr_coord.y)
+
+
+
+_endmethod
+$
+
+
+
+_global start_goworld_worker<< _proc(name, exe, conf, log)
+				 _local pp << _proc()
+								  _import name, exe, conf, log
+								  _local g << goworld.new(name, exe, conf, log)
+								  g.start()
+							  _endproc.fork_at(light_thread.vm_priority - 1)
+			 _endproc 
+$
+
+
+
+

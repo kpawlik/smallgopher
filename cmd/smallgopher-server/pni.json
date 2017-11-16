@@ -1,0 +1,180 @@
+{
+    "server": {
+        "port": 4000,
+        "center": [32.72435148682413, -117.16269111601927],
+        "features": [
+            {
+                "name": "mit_hub",
+                "display_name": "HUB",
+                "dataset": "gis",
+                "min_zoom": 10,
+                "max_zoom": 20,
+                "fields": [
+					{
+                        "name": "myw_smallworld_id",
+                        "display_name": "ID",
+                        "type": "int",
+						"key": true
+                    },
+                    {
+                        "name": "name",
+                        "display_name": "Name",
+                        "type": "string",
+                        "searchable": true
+                    },
+                    {
+                        "name": "location",
+                        "display_name": "Geom",
+                        "type": "point",
+						"geom": true
+                    }
+                ]
+            }, {
+                "name": "tap",
+                "display_name": "Tap",
+                "dataset": "gis",
+                "min_zoom": 18,
+                "max_zoom": 20,
+                "fields": [
+					{
+                        "name": "id",
+                        "display_name": "ID",
+                        "type": "int",
+						"key": true
+                    },
+                    {
+                        "name": "name",
+                        "display_name": "Name",
+                        "type": "string"
+                    },
+                    {
+                        "name": "location",
+                        "display_name": "Geom",
+                        "type": "point",
+						"geom": true
+                    }
+                ]
+            },
+			{
+                "name": "amplifier",
+                "display_name": "Amplifier",
+                "dataset": "gis",
+                "min_zoom": 17,
+                "max_zoom": 20,
+                "fields": [
+					{
+                        "name": "myw_smallworld_id",
+                        "display_name": "ID",
+						"key": true
+                    },
+                    {
+                        "name": "name",
+                        "display_name": "Name"
+                    },
+                    {
+                        "name": "location",
+                        "display_name": "Geom",
+                        "type": "point",
+						"geom": true
+                    }
+                ]
+            },
+            {
+                "name": "te",
+                "display_name": "TE",
+                "dataset": "gis",
+                "min_zoom": 17,
+                "max_zoom": 20,
+                "fields": [
+                    {
+                        "name": "myw_smallworld_id",
+                        "display_name": "ID",
+                        "key": true
+                    },
+                    {
+                        "name": "name",
+                        "display_name": "Name"
+                    },
+                    {
+                        "name": "location",
+                        "display_name": "Geom",
+                        "type": "point",
+                        "geom": true
+                    }
+                ]
+            },
+			{
+                "name": "sheath",
+                "display_name": "Sheath",
+                "dataset": "gis",
+                "min_zoom": 17,
+                "max_zoom": 20,
+                "fields": [
+					{
+                        "name": "myw_smallworld_id",
+                        "display_name": "ID",
+						"key": true
+                    },
+                    {
+                        "name": "name",
+                        "display_name": "Name",
+                        "searchable": true
+
+                    },
+                    {
+                        "name": "route",
+                        "display_name": "Geom",
+                        "type": "chain",
+						"geom": true
+                    }
+                ]
+            },
+			{
+                "name": "coaxial_cable",
+                "display_name": "Coaxial",
+                "dataset": "gis",
+                "min_zoom": 18,
+                "max_zoom": 20,
+                "fields": [
+					{
+                        "name": "myw_smallworld_id",
+                        "display_name": "ID",
+						"key": true
+                    },
+                    {
+                        "name": "name",
+                        "display_name": "Name"
+                    },
+                    {
+                        "name": "route",
+                        "display_name": "Geom",
+                        "type": "chain",
+						"geom": true
+                    }
+                ]
+            }
+		]
+    },
+    "workers": [
+        {
+            "port": 4002,
+            "host": "localhost",
+            "name": "w1"
+        },
+        {
+            "port": 4001,
+            "host": "localhost",
+            "name": "w2"
+        },
+        {
+            "port": 4003,
+            "host": "localhost",
+            "name": "w3"
+        },
+        {
+            "port": 4004,
+            "host": "localhost",
+            "name": "w4"
+        }
+    ]
+}

@@ -1,0 +1,80 @@
+<html>
+
+<head>
+	<title>Fun with Maps!</title>
+	<link rel="icon" type="image/png" href="img/favico.png">
+	<script type="text/javascript" src="/js/lib/require.min.js">
+
+	</script>
+	<script type="text/javascript" src="/js/require.config.js">
+
+	</script>
+	<link rel="stylesheet" href="/js/lib/leaflet/leaflet.css" />
+	<link rel="stylesheet" href="/styles/style.css" />
+	<link rel="stylesheet" href="/js/lib/jquery/jquery-ui.css" />
+
+	<script type="text/javascript">
+		var appl;
+		require([
+			"fwm-client",
+			"pro_test"
+		], function (fwm, pT) {
+			"use strict";
+			var app = new fwm.Application("Fun with Maps!", [{{index .Center 0}}, {{index .Center 1}}]);
+			app.run();
+			pT.diag(app);
+			appl = app;
+
+		});
+	</script>
+</head>
+
+<body>
+
+	<!--<div class="mask">-->
+		<!--<div class="header">-->
+
+		<!--</div>-->
+		<!--<div id="zoom"></div>-->
+				<div id="control-pane">
+					<buttonset>
+					<button id="bt-layers">Layers</button>
+					<button id="bt-viewer">Viewer</button>
+					<button id="bt-search">Search</button>
+					</buttonset>
+				</div>
+				<div id="layers-pane-dialog">
+					<div id="layers-pane"></div>
+				</div>
+				<div id="feature-viewer-dialog">
+					<div id="feature-viewer"></div>
+				</div>
+				<div id="search-dialog">
+					<div id="search-pane">
+						<select id="search-feature"></select>
+						<select id="search-field"></select>
+						<input id="search-value"/>
+						<button id="search-button">Search</button>
+					</div>
+					<div id="search-result"></div>
+				</div>
+				<div id="mapid"></div>
+		<!--<div class="colleft">-->
+
+			<!--<div class="col1">-->
+				<!--<div id="mapid"></div>
+			</div>
+			<div class="col2">
+				
+			</div>
+
+		</div>
+		<div class="footer">
+
+		</div>
+
+	</div>-->
+
+</body>
+
+</html>

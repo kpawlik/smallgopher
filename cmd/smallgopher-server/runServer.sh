@@ -1,0 +1,1 @@
+./smallgopher-server -c ./goworld.json
